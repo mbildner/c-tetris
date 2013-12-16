@@ -32,7 +32,7 @@ int main (int argc, char *argv[]) {
 
 	SDL_Renderer *renderer;
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	SDL_Texture *sdl_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 
@@ -62,29 +62,46 @@ int main (int argc, char *argv[]) {
 	pretty_rect.w = 100;
 	pretty_rect.h = 100;
 
+	const int speed = 5;
 
 
 	int running = 1;
 	while (running) {
-
 		// take input
 		while ( SDL_PollEvent( &event ) ) {
 			switch ( event.type ) {
 				case SDL_KEYDOWN:
-					printf ("key: %d\n", event.key.keysym.sym);
-					break;
-
-				case SDL_KEYUP:
 					break;
 
 				case SDL_QUIT:
 					running = 0;
-
-				default:
-					printf("nope\n");
 					break;
 
-			} 
+				default:
+					break;
+
+			}
+		}
+
+		const Uint8 *state = SDL_GetKeyboardState(NULL);
+
+		if (state[SDL_SCANCODE_LEFT]) {
+			pretty_rect.x -= speed;
+
+		}
+
+		if (state[SDL_SCANCODE_RIGHT]) {
+			pretty_rect.x += speed;
+
+		}
+
+		if (state[SDL_SCANCODE_UP]) {
+			pretty_rect.y -= speed;
+
+		}
+
+		if(state[SDL_SCANCODE_DOWN]) {
+			pretty_rect.y += speed;
 		}
 
 		// clear screen
