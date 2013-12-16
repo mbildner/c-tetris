@@ -4,9 +4,81 @@
 
 #include <SDL2/SDL.h>
 
+#define rows 20
+#define cols 10
+
+
+int boxsize = 32;
+
+char game_model[rows][cols] = {0};
+
+char tetrominoes[7][4][4] = {
+	{
+		{0, 1, 0, 0},
+		{0, 1, 0, 0},
+		{0, 1, 0, 0},
+		{0, 1, 0, 0}
+	},
+	{
+		{0, 0, 0, 0},
+		{0, 1, 1, 0},
+		{0, 1, 1, 0},
+		{0, 0, 0, 0}
+	},
+	{
+		{0, 1, 0, 0},
+		{0, 1, 0, 0},
+		{0, 1, 1, 0},
+		{0, 0, 0, 0}
+	},
+	{
+		{0, 0, 1, 0},
+		{0, 0, 1, 0},
+		{0, 1, 1, 0},
+		{0, 0, 0, 0}
+	},
+	{
+		{0, 0, 1, 0},
+		{0, 1, 1, 1},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0}
+	},
+	{
+		{0, 1, 0, 0},
+		{0, 1, 1, 0},
+		{0, 0, 1, 0},
+		{0, 0, 0, 0}
+	},
+	{
+		{0, 0, 1, 0},
+		{0, 1, 1, 0},
+		{0, 1, 0, 0},
+		{0, 0, 0, 0}
+	}
+};
+
+
+int piecex = 0;
+int piecey = 0;
 
 
 
+static void draw_tetromino (SDL_Surface *surface, int x, int y, char tetromino[4][4]) {
+	for (int row=0; row<4; row++) {
+		for (int col=0; col<4; col++) {
+			if (!tetromino[row][col]) {
+				continue;
+			}
+
+			SDL_Rect rect;
+			rect.x = x + (boxsize * col);
+			rect.y = y + (boxsize * row);
+			rect.w = boxsize;
+			rect.h = boxsize;
+			SDL_FillRect(surface, &rect, 0xff797800);
+		}
+	}
+}
 
 
 int main (int argc, char *argv[]) {
@@ -50,20 +122,24 @@ int main (int argc, char *argv[]) {
 	}
 
 
+
 	SDL_Rect clear_screen_rect;
 	clear_screen_rect.x = 0;
 	clear_screen_rect.y = 0;
+
 	clear_screen_rect.w = windowWidth;
 	clear_screen_rect.h = windowHeight;
 
-	SDL_Rect pretty_rect;
-	pretty_rect.x = 10;
-	pretty_rect.y = 10;
-	pretty_rect.w = 100;
-	pretty_rect.h = 100;
+	int board_width = boxsize * cols;
+	int board_height = boxsize * rows;
 
-	const int speed = 5;
+	SDL_Rect board;
+	board.x = 0;
+	board.y = 0;
+	board.w = board_width;
+	board.h = board_height;
 
+	const int speed = 1;
 
 	int running = 1;
 	while (running) {
@@ -86,29 +162,28 @@ int main (int argc, char *argv[]) {
 		const Uint8 *state = SDL_GetKeyboardState(NULL);
 
 		if (state[SDL_SCANCODE_LEFT]) {
-			pretty_rect.x -= speed;
+			piecex -= speed;
 
 		}
 
 		if (state[SDL_SCANCODE_RIGHT]) {
-			pretty_rect.x += speed;
+			piecex += speed;
 
 		}
 
 		if (state[SDL_SCANCODE_UP]) {
-			pretty_rect.y -= speed;
+			piecey -= speed;
 
 		}
 
 		if(state[SDL_SCANCODE_DOWN]) {
-			pretty_rect.y += speed;
+			piecey += speed;
 		}
 
 		// clear screen
 		SDL_FillRect(surface, &clear_screen_rect, 0);		
-		SDL_FillRect(surface, &pretty_rect, 0xffffffff);		
-
-
+		SDL_FillRect(surface, &board, 0xff990099);		
+		draw_tetromino(surface, piecex * boxsize, piecey * boxsize, tetrominoes[2]);
 
 		// render screen
 		SDL_UpdateTexture(sdl_texture, NULL, surface->pixels, surface->pitch);
