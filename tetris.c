@@ -57,10 +57,17 @@ char tetrominoes[7][4][4] = {
 	}
 };
 
+SDL_Rect clear_screen_rect;
+SDL_Surface *surface;
+SDL_Rect board;
+
+SDL_Renderer *renderer;
+
+
+SDL_Texture *sdl_texture;
 
 int piecex = 0;
 int piecey = 0;
-
 
 
 static void draw_tetromino (SDL_Surface *surface, int x, int y, char tetromino[4][4]) {
@@ -80,6 +87,18 @@ static void draw_tetromino (SDL_Surface *surface, int x, int y, char tetromino[4
 	}
 }
 
+
+static void draw_screen () {
+	// clear screen
+	SDL_FillRect(surface, &clear_screen_rect, 0);		
+	SDL_FillRect(surface, &board, 0xff990099);		
+	draw_tetromino(surface, piecex * boxsize, piecey * boxsize, tetrominoes[2]);
+	
+	// render screen
+	SDL_UpdateTexture(sdl_texture, NULL, surface->pixels, surface->pitch);
+	SDL_RenderCopy(renderer, sdl_texture, NULL, NULL);
+	SDL_RenderPresent(renderer);		
+}
 
 int main (int argc, char *argv[]) {
 	int windowWidth = 800;
@@ -102,15 +121,14 @@ int main (int argc, char *argv[]) {
 
 	assert(window);
 
-	SDL_Renderer *renderer;
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-	SDL_Texture *sdl_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
+	sdl_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, windowWidth, windowHeight);
 
 	assert(sdl_texture);
 
-	SDL_Surface *surface = SDL_CreateRGBSurface(0, windowWidth, windowHeight, 32,
+	surface = SDL_CreateRGBSurface(0, windowWidth, windowHeight, 32,
 			0x00FF0000,
          	0x0000FF00,
             0x000000FF,
@@ -123,7 +141,6 @@ int main (int argc, char *argv[]) {
 
 
 
-	SDL_Rect clear_screen_rect;
 	clear_screen_rect.x = 0;
 	clear_screen_rect.y = 0;
 
@@ -133,7 +150,6 @@ int main (int argc, char *argv[]) {
 	int board_width = boxsize * cols;
 	int board_height = boxsize * rows;
 
-	SDL_Rect board;
 	board.x = 0;
 	board.y = 0;
 	board.w = board_width;
@@ -147,6 +163,24 @@ int main (int argc, char *argv[]) {
 		while ( SDL_PollEvent( &event ) ) {
 			switch ( event.type ) {
 				case SDL_KEYDOWN:
+					switch ( event.key.keysym.sym ) {
+						case SDLK_LEFT:
+							piecex -= 1;
+							break;
+
+						case SDLK_RIGHT:
+							piecex += 1;
+							break;
+
+						case SDLK_UP:
+							piecey -= 1;
+							break;
+
+						case SDLK_DOWN:
+							piecey += 1;
+							break;
+					}
+
 					break;
 
 				case SDL_QUIT:
@@ -159,36 +193,8 @@ int main (int argc, char *argv[]) {
 			}
 		}
 
-		const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-		if (state[SDL_SCANCODE_LEFT]) {
-			piecex -= speed;
-
-		}
-
-		if (state[SDL_SCANCODE_RIGHT]) {
-			piecex += speed;
-
-		}
-
-		if (state[SDL_SCANCODE_UP]) {
-			piecey -= speed;
-
-		}
-
-		if(state[SDL_SCANCODE_DOWN]) {
-			piecey += speed;
-		}
-
-		// clear screen
-		SDL_FillRect(surface, &clear_screen_rect, 0);		
-		SDL_FillRect(surface, &board, 0xff990099);		
-		draw_tetromino(surface, piecex * boxsize, piecey * boxsize, tetrominoes[2]);
-
-		// render screen
-		SDL_UpdateTexture(sdl_texture, NULL, surface->pixels, surface->pitch);
-		SDL_RenderCopy(renderer, sdl_texture, NULL, NULL);
-		SDL_RenderPresent(renderer);		
+		draw_screen();
 	}
 
 
