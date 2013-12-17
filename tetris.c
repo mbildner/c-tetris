@@ -10,7 +10,6 @@
 #define cols 10
 
 
-
 int boxsize = 32;
 
 char game_model[rows][cols] = {0};
@@ -24,33 +23,33 @@ char tetrominoes[7][4][4] = {
 	},
 	{
 		{0, 0, 0, 0},
-		{0, 1, 1, 0},
-		{0, 1, 1, 0},
-		{0, 0, 0, 0}
-	},
-	{
-		{0, 1, 0, 0},
-		{0, 1, 0, 0},
-		{0, 1, 1, 0},
-		{0, 0, 0, 0}
-	},
-	{
-		{0, 0, 1, 0},
-		{0, 0, 1, 0},
-		{0, 1, 1, 0},
-		{0, 0, 0, 0}
-	},
-	{
-		{0, 0, 1, 0},
-		{0, 1, 1, 1},
 		{0, 0, 0, 0},
-		{0, 0, 0, 0}
+		{0, 1, 1, 0},
+		{0, 1, 1, 0}
 	},
 	{
+		{0, 0, 0, 0},
+		{0, 1, 0, 0},
+		{0, 1, 0, 0},
+		{0, 1, 1, 0}
+	},
+	{
+		{0, 0, 0, 0},
+		{0, 0, 1, 0},
+		{0, 0, 1, 0},
+		{0, 1, 1, 0}
+	},
+	{
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 1, 0},
+		{0, 1, 1, 1}
+	},
+	{	
+		{0, 0, 0, 0},
 		{0, 1, 0, 0},
 		{0, 1, 1, 0},
-		{0, 0, 1, 0},
-		{0, 0, 0, 0}
+		{0, 0, 1, 0}
 	},
 	{
 		{0, 0, 0, 0},
@@ -100,12 +99,46 @@ static void draw_tetromino (SDL_Surface *surface, int x, int y, char tetromino[4
 	}
 }
 
+static void draw_model (SDL_Surface *surface) {
+	for (int row=0; row<rows; row++) {
+		for (int col=0; col<cols; col++) {
+
+			if (game_model[row][col]) {
+
+			SDL_Rect board_block;
+			board_block.y = row * boxsize;
+			board_block.x = col * boxsize;
+			board_block.h = boxsize;
+			board_block.w = boxsize;
+
+			SDL_FillRect(surface, &board_block, 0xff797800);
+
+			}
+
+		}
+	}
+}
+
+
+static void print_board () {
+	printf("%s\n", "board start: ");
+	for (int row=0; row<rows; row++) {
+		for (int col=0; col<cols; col++) {
+			printf("%d", game_model[row][col]);
+		}
+		printf("\n");
+	}
+	printf("%s\n", "board end: ");
+
+}
 
 static void draw_screen () {
 	// clear screen
 	SDL_FillRect(surface, &clear_screen_rect, 0);		
 	SDL_FillRect(surface, &board, 0xff990099);		
+
 	draw_tetromino(surface, piecex * boxsize, piecey * boxsize, tetrominoes[current_piece]);
+	draw_model(surface);
 	
 	// render screen
 	SDL_UpdateTexture(sdl_texture, NULL, surface->pixels, surface->pitch);
@@ -113,33 +146,99 @@ static void draw_screen () {
 	SDL_RenderPresent(renderer);		
 }
 
+
+static int piece_collision () {
+	for (int piece_row=0; piece_row<4; piece_row++) {
+		for (int piece_col=0; piece_col<4; piece_col++) {
+			if (tetrominoes[current_piece][piece_row][piece_col]) {
+				int row = piece_row + piecey;
+				int col = piece_col + piecex;
+
+				if (row >= rows || row < 0 || col < 0 || col >= cols) {
+					continue;
+				}
+
+				if (game_model[row][col]) {
+					printf("%d %d\n", row, col);
+					return 1;
+				}
+				
+			}
+		}
+	}
+
+	return 0;
+}
+
 #define max 10
 
 int drop_countdown = max;
 
 static void finish_piece () {
+	for (int row=0; row<4; row++) {
+		for (int col=0; col<4; col++) {
+			int block = tetrominoes[current_piece][row][col];
+			printf("%d %d\n", piecey + row, piecex + col);
+
+
+			int absolute_row = row + piecey;
+			int absolute_col = col + piecex;
+
+			if (absolute_row >= rows || absolute_row < 0 || absolute_col < 0 || absolute_col >= cols) {
+				continue;
+			}
+
+			if (block) {
+				game_model[absolute_row][absolute_col] = 1;
+			}
+		}
+	}
+
 	choose_random_piece();
 }
 
 static void move_piece (int x, int y) {
+	int old_x = piecex;
+	int old_y = piecey;
+
 	piecex += x;
 	piecey += y;
 
+	if (piece_collision()) {
+		piecex = old_x;
+		piecey = old_y;
+		// printf("%s\n", "substrate collision");
+		finish_piece();
+		return;
+	}
+
 	for (int row=0; row<4; row++) {
 		for (int col=0; col<4; col++) {
+
 			if (!tetrominoes[current_piece][row][col]) {
 				continue;
 			}
+
 			if (piecex + col < 0) {
-				piecex -= x;				
+				piecex = old_x;
+				piecey = old_y;
+				return;
 			}
+
 			if (piecex + col >= cols) {
-				piecex -= x;
+				piecex = old_x;
+				piecey = old_y;
+				return;
 			}
+
 			if (piecey + row >= rows) {
-				piecey -= y;
+				piecey = old_y;
+				// printf("%s\n", "bottom row collision");
 				finish_piece();
+				return;
 			}
+
+
 		}
 	}
 
@@ -181,7 +280,6 @@ static void flush_events () {
 					case SDLK_SPACE:
 						break;
 				}
-
 				break;
 
 			case SDL_QUIT:
@@ -197,6 +295,7 @@ static void flush_events () {
 
 int main (int argc, char *argv[]) {
 	srand (time(NULL));
+
 	int windowWidth = 800;
 	int windowHeight = 800;
 
