@@ -221,15 +221,12 @@ int running = 1;
 
 int current_rotation;
 
-
 static void clear_board () {
 	memset (game_model, 0, rows*cols);		
 }
 
-
 static void choose_random_piece () {
 	current_piece = rand() % 8;
-	current_piece = 3;
 	current_rotation = 0;
 	piecex = 3;
 	piecey = 0;
