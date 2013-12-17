@@ -205,10 +205,16 @@ static void move_piece (int x, int y) {
 	piecey += y;
 
 	if (piece_collision()) {
+
 		piecex = old_x;
 		piecey = old_y;
 		// printf("%s\n", "substrate collision");
-		finish_piece();
+
+		if (y) {
+			finish_piece();
+		}
+
+
 		return;
 	}
 
