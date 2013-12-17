@@ -299,6 +299,27 @@ static void draw_screen () {
 }
 
 
+static void clear_full_rows () {
+	int row_offset = 0;
+	for (int row=rows-1; row >= 0; row--) {
+
+		int full = 1;
+		for (int col=0; col<cols; col++) {
+			if (!game_model[row][col]) {
+				full = 0;
+			}
+
+			game_model[(row + row_offset)][col] = game_model[row][col]; 
+		}
+		row_offset += full;
+	}
+
+	for (int row=0; row<row_offset; row++) {
+		memset (game_model, 0, row_offset*cols);		
+	}
+}
+
+
 static int piece_collision () {
 	for (int piece_row=0; piece_row<4; piece_row++) {
 		for (int piece_col=0; piece_col<4; piece_col++) {
@@ -344,7 +365,9 @@ static void finish_piece () {
 		}
 	}
 
+	clear_full_rows();
 	choose_random_piece();
+
 }
 
 static int move_piece (int x, int y) {
