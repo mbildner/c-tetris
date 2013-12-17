@@ -12,52 +12,196 @@
 
 int boxsize = 32;
 
-char game_model[rows][cols] = {0};
+char game_model[rows][cols];
 
-char tetrominoes[7][4][4] = {
+char tetrominoes[7][4][4][4] = 
+
+{
 	{
-		{0, 1, 0, 0},
-		{0, 1, 0, 0},
-		{0, 1, 0, 0},
-		{0, 1, 0, 0}
+		{
+			{0, 1, 0, 0},
+			{0, 1, 0, 0},
+			{0, 1, 0, 0},
+			{0, 1, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{1, 1, 1, 1},
+			{0, 0, 0, 0},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 1, 0, 0},
+			{0, 1, 0, 0},
+			{0, 1, 0, 0},
+			{0, 1, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{1, 1, 1, 1},
+			{0, 0, 0, 0},
+			{0, 0, 0, 0}
+		}
 	},
 	{
-		{0, 0, 0, 0},
-		{0, 0, 0, 0},
-		{0, 1, 1, 0},
-		{0, 1, 1, 0}
+
+		{
+			{0, 0, 0, 0},
+			{0, 1, 1, 0},
+			{0, 1, 1, 0},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 1, 1, 0},
+			{0, 1, 1, 0},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 1, 1, 0},
+			{0, 1, 1, 0},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 1, 1, 0},
+			{0, 1, 1, 0},
+			{0, 0, 0, 0}
+		},
 	},
 	{
-		{0, 0, 0, 0},
-		{0, 1, 0, 0},
-		{0, 1, 0, 0},
-		{0, 1, 1, 0}
+		{
+			{0, 0, 0, 0},
+			{0, 1, 0, 0},
+			{0, 1, 0, 0},
+			{0, 1, 1, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{1, 1, 1, 0},
+			{1, 0, 0, 0},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 1, 1, 0},
+			{0, 0, 1, 0},
+			{0, 0, 1, 0},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 0, 0, 1},
+			{0, 1, 1, 1},
+			{0, 0, 0, 0}
+		}
 	},
 	{
-		{0, 0, 0, 0},
-		{0, 0, 1, 0},
-		{0, 0, 1, 0},
-		{0, 1, 1, 0}
+		{
+			{0, 0, 0, 0},
+			{0, 0, 1, 0},
+			{0, 0, 1, 0},
+			{0, 1, 1, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{1, 0, 0, 0},
+			{1, 1, 1, 0},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 1, 1, 0},
+			{0, 1, 0, 0},
+			{0, 1, 0, 0},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 1, 1, 1},
+			{0, 0, 0, 1},
+			{0, 0, 0, 0}
+		},
 	},
 	{
-		{0, 0, 0, 0},
-		{0, 0, 0, 0},
-		{0, 0, 1, 0},
-		{0, 1, 1, 1}
-	},
-	{	
-		{0, 0, 0, 0},
-		{0, 1, 0, 0},
-		{0, 1, 1, 0},
-		{0, 0, 1, 0}
+		{
+			{0, 0, 0, 0},
+			{0, 0, 1, 0},
+			{0, 1, 1, 1},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 0, 1, 0},
+			{0, 0, 1, 1},
+			{0, 0, 1, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 0, 0, 0},
+			{0, 1, 1, 1},
+			{0, 0, 1, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 0, 1, 0},
+			{0, 1, 1, 0},
+			{0, 0, 1, 0}
+		}
 	},
 	{
-		{0, 0, 0, 0},
-		{0, 0, 1, 0},
-		{0, 1, 1, 0},
-		{0, 1, 0, 0}
+		{	
+			{0, 0, 0, 0},
+			{0, 1, 0, 0},
+			{0, 1, 1, 0},
+			{0, 0, 1, 0}
+		},
+		{	
+			{0, 0, 0, 0},
+			{0, 1, 1, 0},
+			{1, 1, 0, 0},
+			{0, 0, 0, 0}
+		},
+		{	
+			{0, 0, 0, 0},
+			{0, 1, 0, 0},
+			{0, 1, 1, 0},
+			{0, 0, 1, 0}
+		},
+		{	
+			{0, 0, 0, 0},
+			{0, 1, 1, 0},
+			{1, 1, 0, 0},
+			{0, 0, 0, 0}
+		},
+	},
+	{
+		{
+			{0, 0, 0, 0},
+			{0, 0, 1, 0},
+			{0, 1, 1, 0},
+			{0, 1, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{1, 1, 0, 0},
+			{0, 1, 1, 0},
+			{0, 0, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 0, 1, 0},
+			{0, 1, 1, 0},
+			{0, 1, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{1, 1, 0, 0},
+			{0, 1, 1, 0},
+			{0, 0, 0, 0}
+		}
 	}
 };
+
 
 
 int current_piece = 1;
@@ -76,8 +220,17 @@ int piecey = 0;
 
 int running = 1;
 
+int current_rotation;
+
+
+static void clear_board () {
+	memset (game_model, 0, rows*cols);		
+}
+
+
 static void choose_random_piece () {
 	current_piece = rand() % 8;
+	current_rotation = 0;
 	piecex = 3;
 	piecey = 0;
 }
@@ -120,7 +273,7 @@ static void draw_model (SDL_Surface *surface) {
 }
 
 
-static void print_board () {
+void print_board () {
 	printf("%s\n", "board start: ");
 	for (int row=0; row<rows; row++) {
 		for (int col=0; col<cols; col++) {
@@ -137,7 +290,7 @@ static void draw_screen () {
 	SDL_FillRect(surface, &clear_screen_rect, 0);		
 	SDL_FillRect(surface, &board, 0xff990099);		
 
-	draw_tetromino(surface, piecex * boxsize, piecey * boxsize, tetrominoes[current_piece]);
+	draw_tetromino(surface, piecex * boxsize, piecey * boxsize, tetrominoes[current_piece][current_rotation]);
 	draw_model(surface);
 	
 	// render screen
@@ -176,7 +329,7 @@ int drop_countdown = max;
 static void finish_piece () {
 	for (int row=0; row<4; row++) {
 		for (int col=0; col<4; col++) {
-			int block = tetrominoes[current_piece][row][col];
+			int block = tetrominoes[current_piece][current_rotation][row][col];
 
 
 			int absolute_row = row + piecey;
@@ -244,6 +397,8 @@ static int move_piece (int x, int y) {
 		}
 	}
 
+	return 0;
+
 }
 
 
@@ -272,7 +427,7 @@ static void flush_events () {
 						break;
 
 					case SDLK_UP:
-						// piecey -= 1;
+						current_rotation = (current_rotation + 1) % 4;
 						break;
 
 					case SDLK_DOWN:
@@ -297,6 +452,8 @@ static void flush_events () {
 }
 
 int main (int argc, char *argv[]) {
+	clear_board();
+
 	srand (time(NULL));
 
 	int windowWidth = 800;
@@ -336,7 +493,6 @@ int main (int argc, char *argv[]) {
 	}
 
 
-
 	clear_screen_rect.x = 0;
 	clear_screen_rect.y = 0;
 
@@ -350,8 +506,6 @@ int main (int argc, char *argv[]) {
 	board.y = 0;
 	board.w = board_width;
 	board.h = board_height;
-
-	const int speed = 1;
 
 	choose_random_piece();
 
