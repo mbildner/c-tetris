@@ -159,7 +159,6 @@ static int piece_collision () {
 				}
 
 				if (game_model[row][col]) {
-					printf("%d %d\n", row, col);
 					return 1;
 				}
 				
@@ -178,7 +177,6 @@ static void finish_piece () {
 	for (int row=0; row<4; row++) {
 		for (int col=0; col<4; col++) {
 			int block = tetrominoes[current_piece][row][col];
-			printf("%d %d\n", piecey + row, piecex + col);
 
 
 			int absolute_row = row + piecey;
@@ -197,7 +195,7 @@ static void finish_piece () {
 	choose_random_piece();
 }
 
-static void move_piece (int x, int y) {
+static int move_piece (int x, int y) {
 	int old_x = piecex;
 	int old_y = piecey;
 
@@ -208,14 +206,13 @@ static void move_piece (int x, int y) {
 
 		piecex = old_x;
 		piecey = old_y;
-		// printf("%s\n", "substrate collision");
 
 		if (y) {
 			finish_piece();
+			return 1;
 		}
 
-
-		return;
+		return 0;
 	}
 
 	for (int row=0; row<4; row++) {
@@ -228,20 +225,19 @@ static void move_piece (int x, int y) {
 			if (piecex + col < 0) {
 				piecex = old_x;
 				piecey = old_y;
-				return;
+				return 0;
 			}
 
 			if (piecex + col >= cols) {
 				piecex = old_x;
 				piecey = old_y;
-				return;
+				return 0;
 			}
 
 			if (piecey + row >= rows) {
 				piecey = old_y;
-				// printf("%s\n", "bottom row collision");
 				finish_piece();
-				return;
+				return 1;
 			}
 
 
@@ -284,6 +280,7 @@ static void flush_events () {
 						break;
 
 					case SDLK_SPACE:
+						while (!move_piece(0, 1)) {}
 						break;
 				}
 				break;
