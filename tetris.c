@@ -78,15 +78,15 @@ char tetrominoes[7][4][4][4] =
 		},
 		{
 			{0, 0, 0, 0},
-			{1, 1, 1, 0},
-			{1, 0, 0, 0},
+			{0, 1, 1, 1},
+			{0, 1, 0, 0},
 			{0, 0, 0, 0}
 		},
 		{
+			{0, 0, 0, 0},
 			{0, 1, 1, 0},
 			{0, 0, 1, 0},
-			{0, 0, 1, 0},
-			{0, 0, 0, 0}
+			{0, 0, 1, 0}
 		},
 		{
 			{0, 0, 0, 0},
@@ -104,21 +104,21 @@ char tetrominoes[7][4][4][4] =
 		},
 		{
 			{0, 0, 0, 0},
+			{0, 0, 0, 0},
 			{1, 0, 0, 0},
-			{1, 1, 1, 0},
-			{0, 0, 0, 0}
-		},
-		{
-			{0, 1, 1, 0},
-			{0, 1, 0, 0},
-			{0, 1, 0, 0},
-			{0, 0, 0, 0}
+			{1, 1, 1, 0}
 		},
 		{
 			{0, 0, 0, 0},
-			{0, 1, 1, 1},
-			{0, 0, 0, 1},
-			{0, 0, 0, 0}
+			{0, 1, 1, 0},
+			{0, 1, 0, 0},
+			{0, 1, 0, 0}
+		},
+		{
+			{0, 0, 0, 0},
+			{0, 0, 0, 0},
+			{1, 1, 1, 0},
+			{0, 0, 1, 0}
 		},
 	},
 	{
@@ -229,6 +229,7 @@ static void clear_board () {
 
 static void choose_random_piece () {
 	current_piece = rand() % 8;
+	current_piece = 3;
 	current_rotation = 0;
 	piecex = 3;
 	piecey = 0;
@@ -246,7 +247,7 @@ static void draw_tetromino (SDL_Surface *surface, int x, int y, char tetromino[4
 			rect.y = y + (boxsize * row);
 			rect.w = boxsize;
 			rect.h = boxsize;
-			SDL_FillRect(surface, &rect, 0xff797800);
+			SDL_FillRect(surface, &rect, 0xffF82640);
 		}
 	}
 }
@@ -263,7 +264,7 @@ static void draw_model (SDL_Surface *surface) {
 			board_block.h = boxsize;
 			board_block.w = boxsize;
 
-			SDL_FillRect(surface, &board_block, 0xff797800);
+			SDL_FillRect(surface, &board_block, 0xff66D9EF);
 
 			}
 
@@ -287,7 +288,8 @@ void print_board () {
 static void draw_screen () {
 	// clear screen
 	SDL_FillRect(surface, &clear_screen_rect, 0);		
-	SDL_FillRect(surface, &board, 0xff990099);		
+
+	SDL_FillRect(surface, &board, 0xff272822);		
 
 	draw_tetromino(surface, piecex * boxsize, piecey * boxsize, tetrominoes[current_piece][current_rotation]);
 	draw_model(surface);
