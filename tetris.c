@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <time.h>
 
-
 #include <SDL2/SDL.h>
 
 #define rows 20
@@ -303,7 +302,7 @@ static void draw_screen () {
 static int piece_collision () {
 	for (int piece_row=0; piece_row<4; piece_row++) {
 		for (int piece_col=0; piece_col<4; piece_col++) {
-			if (tetrominoes[current_piece][piece_row][piece_col]) {
+			if (tetrominoes[current_piece][current_rotation][piece_row][piece_col]) {
 				int row = piece_row + piecey;
 				int col = piece_col + piecex;
 
@@ -371,7 +370,7 @@ static int move_piece (int x, int y) {
 	for (int row=0; row<4; row++) {
 		for (int col=0; col<4; col++) {
 
-			if (!tetrominoes[current_piece][row][col]) {
+			if (!tetrominoes[current_piece][current_rotation][row][col]) {
 				continue;
 			}
 
