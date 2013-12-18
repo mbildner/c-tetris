@@ -369,6 +369,70 @@ static void finish_piece () {
 
 }
 
+
+
+
+
+
+
+static void try_rotate () {
+
+	int proposed_row = piecey;
+	int proposed_col = piecex;
+	int proposed_rotation = current_rotation = (current_rotation + 1) % 4;
+
+	for (int row=0; row<4; row++) {
+		for (int col=0; col<4; col++) {
+
+			if (!tetrominoes[current_piece][proposed_rotation][row][col]) {
+				continue;
+			}
+
+			int absolute_row = row + proposed_row;
+			int absolute_col = col + proposed_col;
+
+			int right_overhang = absolute_col - cols;
+			if (right_overhang > 0) {
+				proposed_col -= right_overhang;
+			}
+
+			int left_overhang = absolute_col;
+			if (left_overhang < 0) {
+				proposed_col -= left_overhang;
+			}
+
+			int bottom_overshoot = absolute_row - rows;
+			if (bottom_overshoot > 0) {
+				proposed_row -= bottom_overshoot;
+			}
+
+		}		
+	}
+
+	for (int piece_row=0; piece_row<4; piece_row++) {
+		for (int piece_col=0; piece_col<4; piece_col++) {
+			if (tetrominoes[current_piece][proposed_rotation][piece_row][piece_col]) {
+				int row = piece_row + proposed_row;
+				int col = piece_col + proposed_col;
+
+				if (row >= rows || row < 0 || col < 0 || col >= cols) {
+					continue;
+				}
+
+				if (game_model[row][col]) {
+					return;
+				}
+			}
+		}
+	}
+	
+	piecey = proposed_row;
+	piecex = proposed_col;
+	current_rotation = proposed_rotation;
+}
+
+
+
 static int move_piece (int x, int y) {
 	int old_x = piecex;
 	int old_y = piecey;
@@ -377,7 +441,6 @@ static int move_piece (int x, int y) {
 	piecey += y;
 
 	if (piece_collision()) {
-
 		piecex = old_x;
 		piecey = old_y;
 
@@ -448,7 +511,7 @@ static void flush_events () {
 						break;
 
 					case SDLK_UP:
-						current_rotation = (current_rotation + 1) % 4;
+						try_rotate();
 						break;
 
 					case SDLK_DOWN:
