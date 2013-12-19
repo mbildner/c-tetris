@@ -244,7 +244,44 @@ static void draw_tetromino (SDL_Surface *surface, int x, int y, char tetromino[4
 			rect.y = y + (boxsize * row);
 			rect.w = boxsize;
 			rect.h = boxsize;
-			SDL_FillRect(surface, &rect, 0xffF82640);
+
+			int tetromino_color;
+
+			switch (current_piece) {
+				case 0:
+					printf("%d\n", current_piece);
+					break;
+
+				case 1:
+					tetromino_color = 0xffffffff;
+					break;
+
+				case 2:
+					tetromino_color = 0xff9CCD2A;
+					break;
+
+				case 3:
+					tetromino_color = 0xffC5272F;
+					break;
+
+				case 4:
+					tetromino_color = 0xff389ADA;
+					break;
+
+				case 5:
+					tetromino_color = 0xffD1D260;
+					break;
+
+				case 6:
+					tetromino_color = 0xffF82640;
+					break;
+
+				case 7:
+					tetromino_color = 0xff9CCD2A;
+					break;
+			}
+
+			SDL_FillRect(surface, &rect, tetromino_color);
 		}
 	}
 }
@@ -319,6 +356,14 @@ static void clear_full_rows () {
 }
 
 
+static void clear_game () {
+	for (int row=0; row<rows; row++) {
+		for (int col=0; col<cols; col++) {
+			game_model[row][col] = 0;
+		}
+	}
+}
+
 static int piece_collision () {
 	for (int piece_row=0; piece_row<4; piece_row++) {
 		for (int piece_col=0; piece_col<4; piece_col++) {
@@ -326,11 +371,18 @@ static int piece_collision () {
 				int row = piece_row + piecey;
 				int col = piece_col + piecex;
 
+
 				if (row >= rows || row < 0 || col < 0 || col >= cols) {
 					continue;
 				}
 
+
 				if (game_model[row][col]) {
+					if (piece_row < 1) {
+						// clear the board
+						clear_game();
+					}
+
 					return 1;
 				}
 				
@@ -420,6 +472,7 @@ static void try_rotate () {
 				}
 
 				if (game_model[row][col]) {
+					printf("game piece collision\n");
 					return;
 				}
 			}
@@ -439,6 +492,7 @@ static int move_piece (int x, int y) {
 
 	piecex += x;
 	piecey += y;
+
 
 	if (piece_collision()) {
 		piecex = old_x;
@@ -476,8 +530,6 @@ static int move_piece (int x, int y) {
 				finish_piece();
 				return 1;
 			}
-
-
 		}
 	}
 
